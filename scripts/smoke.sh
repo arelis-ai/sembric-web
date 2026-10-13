@@ -5,6 +5,13 @@ base="${1:?Usage: scripts/smoke.sh <origin>}"
 fail() { echo "FAIL: $*" >&2; exit 1; }
 
 status() { curl -s -o /dev/null -w '%{http_code}' --retry 3 --retry-all-errors "$1"; }
+
+# A new revision or certificate can take a few minutes to serve; wait up to ten minutes for the home page.
+for attempt in $(seq 1 60); do
+  [[ "$(status "$base/")" == 200 ]] && break
+  [[ "$attempt" == 60 ]] && fail "home page did not return 200 within ten minutes"
+  sleep 10
+done
 headers="$(curl -fsSI --retry 3 --retry-all-errors "$base/")"
 for header in strict-transport-security content-security-policy x-content-type-options referrer-policy permissions-policy; do
   grep -qi "^$header:" <<<"$headers" || fail "missing $header"

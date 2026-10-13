@@ -70,7 +70,7 @@ run "secure_public_site" {
     error_message = "Use the global external Application Load Balancer."
   }
   assert {
-    condition     = google_compute_url_map.redirect.default_url_redirect[0].https_redirect
+    condition     = google_compute_url_map.redirect.default_url_redirect[0].https_redirect && google_compute_url_map.redirect.default_url_redirect[0].host_redirect == "sembric.app.arelis.digital"
     error_message = "Plain HTTP must only redirect to HTTPS."
   }
   assert {

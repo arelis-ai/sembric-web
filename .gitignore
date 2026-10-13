@@ -15,3 +15,5 @@ artifacts/
 infra/.terraform/
 crash.log
 .DS_Store
+tfplan
+*.tfplan
