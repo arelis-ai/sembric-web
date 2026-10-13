@@ -1,0 +1,41 @@
+# Weekly dependency updates. Minor and patch updates are grouped per ecosystem; majors arrive individually.
+# The cooldown holds back releases younger than a week so a compromised publish has time to be caught.
+# CI, including the image scan and Lighthouse budgets, must pass before any update merges.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+    groups:
+      actions-minor-and-patch:
+        update-types: [minor, patch]
+
+  # Dockerfile base images (tag plus digest).
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: terraform
+    directory: /infra
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 2

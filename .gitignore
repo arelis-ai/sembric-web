@@ -1,0 +1,17 @@
+node_modules/
+dist/
+dist-ssr/
+dist-nginx/
+test-results/
+playwright-report/
+.lighthouseci/
+artifacts/
+.env
+.env.*
+*.tfvars
+!*.tfvars.example
+*.tfstate
+*.tfstate.*
+infra/.terraform/
+crash.log
+.DS_Store

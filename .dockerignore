@@ -1,0 +1,13 @@
+node_modules
+dist
+dist-ssr
+dist-nginx
+test-results
+playwright-report
+.lighthouseci
+artifacts
+infra
+.git
+.github
+*.md
+!docs

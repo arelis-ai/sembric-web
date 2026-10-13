@@ -1,0 +1,11 @@
+dist
+dist-ssr
+node_modules
+test-results
+playwright-report
+.lighthouseci
+artifacts
+infra/.terraform
+infra/.terraform.lock.hcl
+package-lock.json
+*.md

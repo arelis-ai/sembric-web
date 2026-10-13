@@ -1,0 +1,49 @@
+/* Sembric design tokens, copied verbatim from the portal (sembric apps/web/src/theme.css, the :root and
+   :root[data-theme='light'] blocks). Keep them identical: scripts/check-tokens.mjs diffs this block against the portal. */
+:root {
+  color-scheme: dark;
+  --color-bg: oklch(0.165 0.012 256);
+  --color-bg-elevated: oklch(0.195 0.013 256);
+  --color-bg-sunken: oklch(0.135 0.012 256);
+  --color-border: oklch(0.265 0.014 256);
+  --color-border-strong: oklch(0.34 0.016 256);
+  --color-fg: oklch(0.96 0.005 250);
+  --color-fg-muted: oklch(0.72 0.012 250);
+  --color-fg-subtle: oklch(0.66 0.014 250);
+  --color-accent: oklch(0.78 0.165 88);
+  --color-accent-fg: oklch(0.18 0.04 88);
+  --color-success: oklch(0.78 0.16 150);
+  --color-warning: oklch(0.82 0.16 75);
+  --color-danger: oklch(0.72 0.19 22);
+  --color-info: oklch(0.78 0.13 230);
+  --ink: var(--color-fg);
+  --muted: var(--color-fg-muted);
+  --line: var(--color-border);
+  --paper: var(--color-bg);
+  --white: var(--color-bg-elevated);
+  --forest: var(--color-bg-elevated);
+  --forest-deep: var(--color-bg-sunken);
+  --accent: var(--color-accent);
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --display: 'Inter', ui-sans-serif, sans-serif;
+  font-family: 'Inter', ui-sans-serif, sans-serif;
+  color: var(--color-fg);
+  background: var(--color-bg);
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+  --color-bg: oklch(0.975 0.004 250);
+  --color-bg-elevated: oklch(1 0 0);
+  --color-bg-sunken: oklch(0.945 0.006 250);
+  --color-border: oklch(0.9 0.008 250);
+  --color-border-strong: oklch(0.78 0.012 250);
+  --color-fg: oklch(0.22 0.012 250);
+  --color-fg-muted: oklch(0.46 0.012 250);
+  --color-fg-subtle: oklch(0.5 0.012 250);
+  --color-accent: oklch(0.48 0.13 75);
+  --color-accent-fg: oklch(0.99 0.012 75);
+  --color-success: oklch(0.47 0.15 150);
+  --color-warning: oklch(0.46 0.11 75);
+  --color-danger: oklch(0.47 0.19 22);
+  --color-info: oklch(0.47 0.14 230);
+}
