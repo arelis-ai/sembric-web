@@ -94,12 +94,14 @@ resource "google_artifact_registry_repository" "site" {
 resource "google_service_account" "run" {
   account_id   = "sembric-web-run"
   display_name = "Sembric website serving identity"
+  depends_on   = [google_project_service.site]
 }
 
 # Deploy identity, impersonated only by GitHub Actions on main of the exact repository.
 resource "google_service_account" "deploy" {
   account_id   = "sembric-web-deploy"
   display_name = "Sembric website deploy identity (GitHub Actions)"
+  depends_on   = [google_project_service.site]
 }
 
 resource "google_iam_workload_identity_pool" "github" {
@@ -294,14 +296,16 @@ resource "google_compute_global_forwarding_rule" "https" {
   target                = google_compute_target_https_proxy.site.id
 }
 
-# HTTP only ever redirects to HTTPS.
+# HTTP only ever redirects to HTTPS on the canonical host (setting the host also keeps ":443" out of Location).
 resource "google_compute_url_map" "redirect" {
   name = "${local.service}-http-redirect"
   default_url_redirect {
+    host_redirect          = var.domain
     https_redirect         = true
     redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
     strip_query            = false
   }
+  depends_on = [google_project_service.site]
 }
 
 resource "google_compute_target_http_proxy" "redirect" {
@@ -330,6 +334,7 @@ resource "google_dns_record_set" "a" {
   type         = "A"
   ttl          = 300
   rrdatas      = [google_compute_global_address.v4.address]
+  depends_on   = [google_project_service.site]
 }
 
 resource "google_dns_record_set" "aaaa" {
@@ -339,6 +344,7 @@ resource "google_dns_record_set" "aaaa" {
   type         = "AAAA"
   ttl          = 300
   rrdatas      = [google_compute_global_address.v6.address]
+  depends_on   = [google_project_service.site]
 }
 
 # --- Monitoring -----------------------------------------------------------------------------------------------------
