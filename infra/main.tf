@@ -296,7 +296,8 @@ resource "google_compute_global_forwarding_rule" "https" {
   target                = google_compute_target_https_proxy.site.id
 }
 
-# HTTP only ever redirects to HTTPS on the canonical host (setting the host also keeps ":443" out of Location).
+# HTTP only ever redirects to HTTPS on the canonical host. Google writes the default port into Location
+# (https://host:443/path); browsers normalize it away.
 resource "google_compute_url_map" "redirect" {
   name = "${local.service}-http-redirect"
   default_url_redirect {
