@@ -1,6 +1,7 @@
 import {
   ArrowRight,
   BadgeCheck,
+  Check,
   CalendarClock,
   CircleHelp,
   Copy,
@@ -13,11 +14,21 @@ import {
   Tags,
   UserX,
   Workflow,
+  X,
 } from 'lucide-react';
 import { CertificationPanel, AgentConsole, GateDiagram } from '../components/visuals';
-import { CheckList, CtaBand, FaqList, PilotButtons, Section } from '../components/ui';
+import { ButtonLink, CheckList, CtaBand, FaqList, LinkCards, PilotButtons, Section } from '../components/ui';
 import { HOME_FAQ } from '../content/faqs';
-import { INTEGRATIONS } from '../content/integrations';
+import { INTEGRATIONS, integrationCards } from '../content/integrations';
+import { MCP_TOOLS } from '../site';
+
+// Product facts, each stated in the Sembric repository's AGENTS.md or docs.
+const FACTS = [
+  ['6', 'warehouse and lakehouse engines, each with a customer identity per role'],
+  ['8', 'read-only MCP tools, limited to what the caller’s role was granted'],
+  ['0', 'agent routes that accept SQL'],
+  ['30 days', 'default certificate lifetime; renewal re-runs every check'],
+];
 
 const PROBLEMS = [
   {
@@ -116,6 +127,63 @@ const CHANGES = [
   },
 ];
 
+const toolsMatching = (pattern: RegExp) => MCP_TOOLS.map(([name]) => name).filter((name) => pattern.test(name));
+const TOOL_GROUPS = [
+  { label: 'Data products', detail: 'Certified aggregates', tools: toolsMatching(/_products?$/) },
+  { label: 'Governed views', detail: 'Approved columns, fixed restrictions', tools: toolsMatching(/_views?$/) },
+  { label: 'Ontology', detail: 'Concepts and their relationships', tools: toolsMatching(/_(concepts|ontology)$/) },
+];
+
+/* eslint-disable jsx-a11y/no-redundant-roles, jsx-a11y/no-interactive-element-to-noninteractive-role --
+   The table stacks into cards on small screens; explicit roles keep its table semantics where a browser drops them for
+   non-table display values. */
+function CompareTable() {
+  return (
+    <div className="table-wrap scroll-x reveal">
+      <table className="compare-table" role="table">
+        <caption className="sr-only">Connecting agents directly compared with connecting them through Sembric</caption>
+        <thead role="rowgroup">
+          <tr role="row">
+            <th scope="col" role="columnheader">
+              <span className="sr-only">Concern</span>
+            </th>
+            <th scope="col" role="columnheader">
+              Direct agent access
+            </th>
+            <th scope="col" role="columnheader" className="compare-sembric-head">
+              Through Sembric
+            </th>
+          </tr>
+        </thead>
+        <tbody role="rowgroup">
+          {COMPARISON.map(([concern, direct, sembric]) => (
+            <tr key={concern} role="row">
+              <th scope="row" role="rowheader">
+                {concern}
+              </th>
+              <td className="compare-direct" role="cell">
+                <X aria-hidden="true" size={15} className="compare-icon" />
+                <span className="compare-label" aria-hidden="true">
+                  Direct agent access
+                </span>
+                <span>{direct}</span>
+              </td>
+              <td className="compare-sembric" role="cell">
+                <Check aria-hidden="true" size={15} className="compare-icon" />
+                <span className="compare-label" aria-hidden="true">
+                  Through Sembric
+                </span>
+                <span>{sembric}</span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+/* eslint-enable jsx-a11y/no-redundant-roles, jsx-a11y/no-interactive-element-to-noninteractive-role */
+
 export function Home() {
   return (
     <>
@@ -129,9 +197,9 @@ export function Home() {
             Give AI agents certified answers, <span className="accent">not warehouse access.</span>
           </h1>
           <p className="hero-lede">
-            Sembric sits between the warehouse you already run and the agents your teams are building. Your people
-            classify fields and certify the exact aggregates and views agents may use. Agents query only those certified
-            surfaces through MCP or a typed API, with no SQL, no copied data and an audit record for every call.
+            Sembric sits between the warehouse you already run and the agents your teams build. Your people certify the
+            exact aggregates and views agents may use; agents query only those, over MCP or a typed API. No SQL, no
+            copied data, and every call audited.
           </p>
           <PilotButtons secondary={{ href: '/product', label: 'See how it works' }} />
           <p className="hero-sources">
@@ -147,6 +215,16 @@ export function Home() {
           <GateDiagram />
         </div>
       </section>
+
+      <div className="facts-band">
+        <ul className="container facts">
+          {FACTS.map(([value, label]) => (
+            <li key={label}>
+              <strong className="fact-value">{value}</strong> <span className="fact-label">{label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <Section
         id="problem"
@@ -229,31 +307,7 @@ export function Home() {
         eyebrow="Shortcut vs. Sembric"
         title="The difference between access and a governed answer"
       >
-        <div className="table-wrap reveal">
-          <table className="compare-table">
-            <caption className="sr-only">
-              Connecting agents directly compared with connecting them through Sembric
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">
-                  <span className="sr-only">Concern</span>
-                </th>
-                <th scope="col">Direct agent access</th>
-                <th scope="col">Through Sembric</th>
-              </tr>
-            </thead>
-            <tbody>
-              {COMPARISON.map(([concern, direct, sembric]) => (
-                <tr key={concern}>
-                  <th scope="row">{concern}</th>
-                  <td className="compare-direct">{direct}</td>
-                  <td className="compare-sembric">{sembric}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <CompareTable />
       </Section>
 
       <Section
@@ -307,17 +361,7 @@ export function Home() {
         title="Built on the engines and policies you already trust"
         intro="Sembric queries with the customer identity mapped to each Sembric role, so the source engine’s own row and column policies keep applying. Only owners connect sources or change those mappings."
       >
-        <ul className="card-grid card-grid-3 integration-grid">
-          {INTEGRATIONS.map((integration) => (
-            <li key={integration.slug} className="card integration-card reveal">
-              <p className="card-kicker">{integration.kind}</p>
-              <h3>
-                <a href={`/integrations/${integration.slug}`}>{integration.name}</a>
-              </h3>
-              <p>{integration.summary}</p>
-            </li>
-          ))}
-        </ul>
+        <LinkCards items={integrationCards} />
       </Section>
 
       <Section
@@ -325,12 +369,52 @@ export function Home() {
         tone="sunken"
         eyebrow="Built for agents"
         title="One MCP endpoint. Eight read-only tools."
-        intro="Connect Claude Code or any HTTP MCP client with a short-lived, revocable Sembric key, or with user-linked tokens from your identity provider. Applications that don’t speak MCP use the typed REST API, described by an OpenAPI document."
+        intro="Connect Claude Code or any HTTP MCP client. Every call is limited to the certified products, governed views and ontology entries granted to the caller’s current role."
       >
-        <div className="actions">
-          <a className="button button-secondary" href="/agents">
-            Connect an agent <ArrowRight aria-hidden="true" size={16} />
-          </a>
+        <div className="split">
+          <div className="split-copy reveal">
+            <CheckList
+              items={[
+                'Agents discover what they may use, read its definition, then query it. No tool accepts SQL.',
+                'Callers authenticate with a short-lived, revocable Sembric key or a user-linked token from your identity provider.',
+                'Applications that don’t speak MCP use the typed REST API, described by an OpenAPI document.',
+              ]}
+            />
+            <div className="actions">
+              <ButtonLink href="/agents" arrow>
+                Connect an agent
+              </ButtonLink>
+              <ButtonLink href="/agents#tools" variant="secondary">
+                See every tool
+              </ButtonLink>
+            </div>
+          </div>
+          <div className="panel tool-panel reveal" role="group" aria-label="Sembric MCP tools">
+            <div className="panel-head">
+              <div>
+                <p className="panel-kicker">tools/list</p>
+                <p className="panel-title">Eight read-only tools</p>
+              </div>
+              <span className="status status-certified">
+                <Check aria-hidden="true" size={12} /> No SQL tool
+              </span>
+            </div>
+            <ul className="tool-groups">
+              {TOOL_GROUPS.map(({ label, detail, tools }) => (
+                <li key={label}>
+                  <p className="tool-group-name">{label}</p>
+                  <p className="tool-group-detail">{detail}</p>
+                  <ul className="tool-chips">
+                    {tools.map((tool) => (
+                      <li key={tool}>
+                        <code>{tool}</code>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </Section>
 

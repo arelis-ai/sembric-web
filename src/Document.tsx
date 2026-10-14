@@ -1,4 +1,5 @@
-import { Breadcrumbs, SiteFooter, SiteHeader } from './components/Chrome';
+import { SiteFooter, SiteHeader } from './components/Chrome';
+import { TrailContext } from './components/ui';
 import { breadcrumbTrail, type Route } from './routes';
 import { ogImagePath, serializeJsonLd, structuredData } from './seo/jsonld';
 import { SITE, absoluteUrl, markdownPath } from './site';
@@ -91,10 +92,10 @@ export function Document({
         </a>
         <SiteHeader path={route.path} />
         <main id="main" tabIndex={-1}>
-          {notFound ? null : <Breadcrumbs trail={breadcrumbTrail(route)} />}
-          {route.render()}
+          <TrailContext.Provider value={notFound ? [] : breadcrumbTrail(route)}>{route.render()}</TrailContext.Provider>
         </main>
         <SiteFooter path={notFound ? '/' : route.path} />
+        <p className="sr-only" aria-live="polite" data-live-region />
       </body>
     </html>
   );

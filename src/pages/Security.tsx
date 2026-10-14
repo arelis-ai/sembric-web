@@ -1,5 +1,5 @@
 import { Database, EyeOff, Fingerprint, KeyRound, ScrollText, ShieldCheck } from 'lucide-react';
-import { CheckList, CtaBand, FaqList, PageHero, Section } from '../components/ui';
+import { ButtonLink, CheckList, CtaBand, FaqList, PageHero, PageNav, Section } from '../components/ui';
 import { SECURITY_FAQ } from '../content/faqs';
 
 const PRINCIPLES = [
@@ -42,6 +42,28 @@ export function Security() {
         eyebrow="Security"
         title="A security model built around your source, not around trust in the agent"
         lede="Sembric assumes agents will ask for things they shouldn’t. It answers only from reviewed, certified definitions, keeps your warehouse in charge of row and column access, and records every decision."
+        actions={
+          <>
+            <ButtonLink href="/contact" arrow>
+              Review it with us
+            </ButtonLink>
+            <ButtonLink href="#status-note-title" variant="secondary">
+              What we don’t claim yet
+            </ButtonLink>
+          </>
+        }
+      />
+      <PageNav
+        items={[
+          { id: 'principles', label: 'Principles' },
+          { id: 'identity', label: 'Identity' },
+          { id: 'query-safety', label: 'Query safety' },
+          { id: 'privacy', label: 'Small groups' },
+          { id: 'audit', label: 'Audit' },
+          { id: 'cost', label: 'Cost controls' },
+          { id: 'deployment', label: 'Deployment' },
+          { id: 'faq', label: 'FAQ' },
+        ]}
       />
 
       <Section id="principles" eyebrow="Principles" title="Six rules Sembric does not bend">
@@ -136,9 +158,16 @@ export function Security() {
       <Section
         id="privacy"
         tone="sunken"
+        layout="aside"
         eyebrow="Privacy in aggregates"
         title="Small groups, handled honestly"
-        intro="A data product can set a reviewed minimum group size. The source query adds HAVING COUNT(*) >= n, so smaller groups — and filters that would isolate them — return no row in previews, certification, the API and MCP."
+        intro={
+          <>
+            A data product can set a reviewed minimum group size. The source query adds{' '}
+            <code>HAVING COUNT(*) &gt;= n</code>, so smaller groups — and filters that would isolate them — return no
+            row in previews, certification, the API and MCP.
+          </>
+        }
       >
         <p className="callout reveal">
           Threshold suppression is not complementary suppression. When a released total and the other released groups
@@ -147,7 +176,7 @@ export function Security() {
         </p>
       </Section>
 
-      <Section id="audit" eyebrow="Audit and operations" title="Evidence you can hand to an auditor">
+      <Section id="audit" layout="aside" eyebrow="Audit and operations" title="Evidence you can hand to an auditor">
         <CheckList
           items={[
             'Audit records cover source connection and discovery, classification, product changes, certification and failed checks, expiry, keys, invitations and every product and view query.',
@@ -162,6 +191,7 @@ export function Security() {
       <Section
         id="cost"
         tone="sunken"
+        layout="aside"
         eyebrow="Cost controls"
         title="Bounded by design, honest about the limits"
         intro="Every statement submitted to a source consumes persistent workspace read budgets before contact — 120 per minute and 5,000 per UTC day by default — including previews, certification checks, catalog pages and schema reads."
@@ -180,6 +210,7 @@ export function Security() {
 
       <Section
         id="deployment"
+        layout="aside"
         eyebrow="Deployment"
         title="Isolation per customer"
         intro="Sembric’s commercial deployment design gives each customer its own Google Cloud workload project, a separate backup project and its own Cloud SQL instance, with the serving and migration identities kept apart."

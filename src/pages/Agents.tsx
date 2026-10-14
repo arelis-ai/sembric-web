@@ -1,4 +1,4 @@
-import { CheckList, CodeBlock, CtaBand, FaqList, PageHero, Section } from '../components/ui';
+import { ButtonLink, CheckList, CodeBlock, CtaBand, FaqList, PageHero, PageNav, Section } from '../components/ui';
 import { AGENTS_FAQ } from '../content/faqs';
 import { MCP_TOOLS } from '../site';
 
@@ -9,21 +9,28 @@ const MESSAGES_API = `{
     "name": "sembric",
     "authorization_token": "YOUR_SEMBRIC_AGENT_KEY"
   }],
-  "tools": [{ "type": "mcp_toolset", "mcp_server_name": "sembric" }]
+  "tools": [{
+    "type": "mcp_toolset",
+    "mcp_server_name": "sembric"
+  }]
 }`;
 
 const TOOLS_LIST = `curl -fsS "$SEMBRIC_URL/mcp" \\
   -H "Authorization: Bearer $SEMBRIC_AGENT_KEY" \\
   -H 'Content-Type: application/json' \\
   -H 'Accept: application/json, text/event-stream' \\
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'`;
+  -d '{"jsonrpc":"2.0","id":1,
+       "method":"tools/list","params":{}}'`;
 
 const QUERY = `{
   "productId": "…",
   "dimensions": ["ordered_at:quarter", "region"],
   "filters": {
     "region": { "in": ["North", "East"] },
-    "ordered_at": { "gte": "2026-01-01T00:00:00", "lt": "2027-01-01T00:00:00" }
+    "ordered_at": {
+      "gte": "2026-01-01T00:00:00",
+      "lt": "2027-01-01T00:00:00"
+    }
   },
   "limit": 20
 }`;
@@ -35,6 +42,26 @@ export function Agents() {
         eyebrow="Agents and MCP"
         title="Connect any MCP agent to answers your team has certified"
         lede="Sembric runs a stateless HTTP MCP server and a typed REST API. Every call is limited to the certified products, governed views and ontology entries granted to the caller’s current role."
+        actions={
+          <>
+            <ButtonLink href="#connect" arrow>
+              Connect an agent
+            </ButtonLink>
+            <ButtonLink href="/contact" variant="secondary">
+              Request a pilot
+            </ButtonLink>
+          </>
+        }
+      />
+      <PageNav
+        items={[
+          { id: 'tools', label: 'Tools' },
+          { id: 'credentials', label: 'Credentials' },
+          { id: 'connect', label: 'Connect' },
+          { id: 'query', label: 'Queries' },
+          { id: 'monitor', label: 'Monitoring' },
+          { id: 'faq', label: 'FAQ' },
+        ]}
       />
 
       <Section
@@ -99,7 +126,7 @@ export function Agents() {
         title="Verify the endpoint, then add it to your agent"
         intro="Use a short-lived key and a public HTTPS Sembric endpoint. The tool list returns only what the key’s member may see."
       >
-        <div className="card-grid card-grid-2">
+        <div className="code-grid">
           <CodeBlock id="code-tools-list" label="List tools with curl" code={TOOLS_LIST} />
           <CodeBlock id="code-messages-api" label="Claude Messages API MCP connector" code={MESSAGES_API} />
         </div>
@@ -114,7 +141,13 @@ export function Agents() {
         tone="sunken"
         eyebrow="Asking richer questions"
         title="Grouping, time grains and typed filters"
-        intro="sembric_query_product groups by up to three declared dimensions. Date and timestamp dimensions accept day, week, month, quarter or year grains; send integers and decimals as strings and dates as YYYY-MM-DD."
+        intro={
+          <>
+            <code>sembric_query_product</code> groups by up to three declared dimensions. Date and timestamp dimensions
+            accept day, week, month, quarter or year grains; send integers and decimals as strings and dates as{' '}
+            <code>YYYY-MM-DD</code>.
+          </>
+        }
       >
         <div className="split">
           <CodeBlock id="code-query" label="Arguments for sembric_query_product" code={QUERY} />
@@ -133,6 +166,7 @@ export function Agents() {
 
       <Section
         id="monitor"
+        layout="aside"
         eyebrow="Monitoring"
         title="See what your agents attempted"
         intro="Owners and engineers watch agent traffic over the last 24 hours, 7 days or 30 days."

@@ -249,6 +249,14 @@ export const INTEGRATIONS: Integration[] = [
   },
 ];
 
+/** Integration index and home-page cards. */
+export const integrationCards = INTEGRATIONS.map((integration) => ({
+  href: `/integrations/${integration.slug}`,
+  label: integration.name,
+  kicker: integration.kind,
+  body: integration.summary,
+}));
+
 export const integrationBySlug = (slug: IntegrationSlug) => {
   const found = INTEGRATIONS.find((integration) => integration.slug === slug);
   if (!found) throw new Error(`unknown integration ${slug}`);
