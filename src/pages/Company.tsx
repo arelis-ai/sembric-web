@@ -1,6 +1,6 @@
 import { ArrowRight, Mail } from 'lucide-react';
-import { ButtonLink, CheckList, CtaBand, PageHero, Section } from '../components/ui';
-import { SITE, pilotMailto } from '../site';
+import { ButtonLink, CheckList, CopyButton, CtaBand, LinkCards, PageHero, Section, Timeline } from '../components/ui';
+import { PILOT_PROMPTS, SITE, pilotMailto } from '../site';
 
 export function About() {
   return (
@@ -10,7 +10,12 @@ export function About() {
         title="Why we built Sembric"
         lede="Companies want AI agents to answer questions from their data. The data is already governed in the warehouse; the risk is in how agents reach it. Sembric is the missing layer in between."
       />
-      <Section id="belief" eyebrow="What we believe" title="Agents should get answers people have vouched for">
+      <Section
+        id="belief"
+        layout="aside"
+        eyebrow="What we believe"
+        title="Agents should get answers people have vouched for"
+      >
         <div className="prose reveal">
           <p>
             Most organisations spent years putting row policies, column grants and data ownership in place. Connecting
@@ -24,7 +29,7 @@ export function About() {
           </p>
         </div>
       </Section>
-      <Section id="principles" tone="sunken" eyebrow="Principles" title="How we build">
+      <Section id="principles" tone="sunken" layout="aside" eyebrow="Principles" title="How we build">
         <CheckList
           items={[
             'Customer data stays in its source. We don’t add ingestion, transformation or free-form SQL.',
@@ -35,14 +40,14 @@ export function About() {
           ]}
         />
       </Section>
-      <Section id="company" eyebrow="Company" title={`Sembric is built by ${SITE.publisher.name}`}>
+      <Section id="company" layout="aside" eyebrow="Company" title={`Sembric is built by ${SITE.publisher.name}`}>
         <div className="prose reveal">
           <p>
             {SITE.publisher.name} builds governance and integration software for enterprise AI. Sembric is available for
             pilots today.
           </p>
           <p>
-            <a href={SITE.publisher.url}>
+            <a className="icon-link" href={SITE.publisher.url}>
               Visit {SITE.publisher.name} <ArrowRight aria-hidden="true" size={14} />
             </a>
           </p>
@@ -60,16 +65,32 @@ export function Contact() {
         eyebrow="Request a pilot"
         title="Start a Sembric pilot on your own warehouse"
         lede="A pilot connects one source, certifies a first data product or governed view with your team, and puts it in front of an agent over MCP."
+        actions={
+          <>
+            <ButtonLink href={pilotMailto} arrow>
+              Email a pilot request
+            </ButtonLink>
+            <ButtonLink href="#pilot" variant="secondary">
+              What a pilot covers
+            </ButtonLink>
+          </>
+        }
       />
-      <Section id="how-to" eyebrow="Get in touch" title="Email us with a few details">
+      <Section
+        id="how-to"
+        eyebrow="Get in touch"
+        title="Email us with a few details"
+        intro="The email button opens a message with these questions filled in. Answer what you can; we’ll take it from there."
+      >
         <div className="split">
           <div className="contact-card card reveal">
             <Mail aria-hidden="true" size={22} className="card-icon" />
             <h3>Pilot requests</h3>
-            <p>
-              <a className="contact-email" href={pilotMailto}>
+            <p className="contact-address">
+              <a className="contact-email" id="contact-email" href={pilotMailto}>
                 {SITE.contactEmail}
               </a>
+              <CopyButton target="contact-email" label="Copy address" />
             </p>
             <ButtonLink href={pilotMailto} arrow>
               Email a pilot request
@@ -80,17 +101,35 @@ export function Contact() {
           </div>
           <div className="split-copy reveal">
             <h3>Helpful to include</h3>
-            <CheckList
-              items={[
-                'Which warehouse or engine holds the data: BigQuery, Snowflake, Trino, Databricks, PostgreSQL or MySQL',
-                'The first questions your agents should answer, and who owns that data today',
-                'Which agents or clients you use, such as Claude Code or your own MCP client',
-                'Any security or compliance review the pilot needs to pass',
-              ]}
-            />
+            <CheckList items={PILOT_PROMPTS} />
             <p className="fine-print">Please don’t send credentials or customer data by email.</p>
           </div>
         </div>
+      </Section>
+      <Section
+        id="pilot"
+        tone="sunken"
+        layout="aside"
+        eyebrow="What a pilot covers"
+        title="From one source to one agent answer"
+        intro="We share the current security evidence and open acceptance gates with pilot customers on request."
+      >
+        <Timeline
+          steps={[
+            {
+              lead: 'Connect one source.',
+              body: 'An owner connects BigQuery, Snowflake, Trino, Databricks, PostgreSQL or MySQL with a narrow, read-only customer identity for each Sembric role, and tests every mapping before saving.',
+            },
+            {
+              lead: 'Certify a first surface.',
+              body: 'The asset’s data steward reviews its classification, then an independent reviewer certifies a data product or governed view by running expected-answer checks under every granted role.',
+            },
+            {
+              lead: 'Query it from an agent.',
+              body: 'Connect Claude Code or your own MCP client with a short-lived, revocable key, and see every answered or refused call in the audit record.',
+            },
+          ]}
+        />
       </Section>
     </>
   );
@@ -104,7 +143,7 @@ export function Privacy() {
         title="Website privacy notice"
         lede={`How ${SITE.name}’s website at ${SITE.origin.replace('https://', '')} handles information. It covers this website only, not the Sembric product.`}
       />
-      <Section id="summary" eyebrow={`Last updated ${SITE.updated}`} title="The short version">
+      <Section id="summary" layout="aside" eyebrow={`Last updated ${SITE.updated}`} title="The short version">
         <div className="prose reveal">
           <p>
             This website sets no cookies, runs no analytics or advertising scripts, embeds no third-party content and
@@ -136,6 +175,35 @@ export function Privacy() {
   );
 }
 
+const SUGGESTIONS = [
+  {
+    href: '/',
+    label: 'Home',
+    body: 'What Sembric is and the problem it solves for companies putting agents on their data.',
+  },
+  {
+    href: '/product',
+    label: 'How it works',
+    body: 'Discover, classify, certify and serve: the workflow and the rules it enforces.',
+  },
+  {
+    href: '/security',
+    label: 'Security',
+    body: 'Per-role source identities, no SQL from agents, fail-closed checks and full audit.',
+  },
+  {
+    href: '/integrations',
+    label: 'Integrations',
+    body: 'BigQuery, Snowflake, Trino, Databricks, PostgreSQL and MySQL.',
+  },
+  {
+    href: '/agents',
+    label: 'Agents and MCP',
+    body: 'Eight read-only MCP tools, credentials and how to connect an agent.',
+  },
+  { href: '/contact', label: 'Request a pilot', body: 'Start with one source, one certified surface and one agent.' },
+];
+
 export function NotFound() {
   return (
     <>
@@ -143,34 +211,15 @@ export function NotFound() {
         eyebrow="404"
         title="This page isn’t certified"
         lede="We couldn’t find the page you asked for. It may have moved, or the link may be mistyped."
+        actions={
+          <ButtonLink href="/" arrow>
+            Go to the home page
+          </ButtonLink>
+        }
       />
-      <section className="section" aria-labelledby="nf-title">
-        <div className="container">
-          <h2 id="nf-title" className="section-title section-title-sm">
-            Try one of these
-          </h2>
-          <ul className="pill-links">
-            <li>
-              <a href="/">Home</a>
-            </li>
-            <li>
-              <a href="/product">How it works</a>
-            </li>
-            <li>
-              <a href="/security">Security</a>
-            </li>
-            <li>
-              <a href="/integrations">Integrations</a>
-            </li>
-            <li>
-              <a href="/agents">Agents and MCP</a>
-            </li>
-            <li>
-              <a href="/contact">Request a pilot</a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      <Section id="suggestions" title="Or try one of these">
+        <LinkCards items={SUGGESTIONS} cta="Open" />
+      </Section>
     </>
   );
 }

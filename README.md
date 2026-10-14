@@ -53,7 +53,8 @@ repository's numeric ID on `refs/heads/main`; there are no service-account keys.
 (checks, e2e, container scan, e2e against nginx and Lighthouse CI), which branch protection requires.
 
 Infrastructure is Terraform in [`infra/`](infra/README.md). See [operations](docs/operations.md) for rollback and
-routine tasks, and [research](docs/research.md) for why the site is built this way.
+routine tasks, [research](docs/research.md) for why the site is built this way, and the
+[UI/UX review](docs/ux-review.md) for each surface's findings and fixes.
 
 ## Content rules
 

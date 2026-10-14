@@ -122,6 +122,74 @@ test('the mobile menu opens and navigates', async ({ page, isMobile }) => {
   await expect(page).toHaveURL(/\/security$/);
 });
 
+test('the mobile menu closes on Escape, on an outside click and returns focus', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'mobile navigation only');
+  await page.goto('/product');
+  const menu = page.locator('.mobile-nav');
+  const toggle = menu.locator('summary');
+  await toggle.click();
+  await expect(menu).toHaveAttribute('open', '');
+  await expect(menu.getByRole('link', { name: 'Product' })).toHaveAttribute('aria-current', 'page');
+  await page.keyboard.press('Escape');
+  await expect(menu).not.toHaveAttribute('open', '');
+  await expect(toggle).toBeFocused();
+  await toggle.click();
+  const panel = await menu.locator('nav').boundingBox();
+  await page.mouse.click(8, (panel?.y ?? 0) + (panel?.height ?? 0) + 40);
+  await expect(menu).not.toHaveAttribute('open', '');
+});
+
+test('the in-page navigation jumps to a section and marks it as current', async ({ page }) => {
+  await page.goto('/security');
+  const nav = page.getByRole('navigation', { name: 'On this page' });
+  await nav.getByRole('link', { name: 'Audit' }).click();
+  await expect(page).toHaveURL(/#audit$/);
+  await expect(nav.getByRole('link', { name: 'Audit' })).toHaveAttribute('aria-current', 'location');
+  await expect(nav).toBeInViewport();
+  const top = await page.locator('#audit-title').evaluate((title) => title.getBoundingClientRect().top);
+  const navBottom = await nav.evaluate((element) => element.getBoundingClientRect().bottom);
+  expect(top).toBeGreaterThan(navBottom);
+  expect(top - navBottom).toBeLessThan(160);
+});
+
+test('the contact page offers a pre-filled email and copies the address', async ({ page, browserName, isMobile }) => {
+  test.skip(browserName !== 'chromium' || isMobile, 'clipboard permissions are granted in desktop Chromium');
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/contact');
+  const email = page.getByRole('link', { name: 'Email a pilot request' }).first();
+  const href = decodeURIComponent((await email.getAttribute('href')) ?? '');
+  expect(href).toMatch(/^mailto:[^?]+\?subject=Sembric pilot request&body=/);
+  expect(href).toContain('Which warehouse or engine holds the data');
+  expect(href).toContain('Please do not include credentials or customer data');
+  const copy = page.locator('[data-copy-target="contact-email"]');
+  await expect(copy).toHaveAccessibleName('Copy address');
+  await copy.click();
+  await expect(copy).toHaveText('Copied');
+  await expect(page.locator('[data-live-region]')).toHaveText('Copied');
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('contact@arelis.digital');
+});
+
+test('the comparison table stacks into labelled cards on small screens', async ({ page, isMobile }) => {
+  await page.goto('/');
+  const label = page.locator('.compare-table .compare-label').first();
+  if (isMobile) await expect(label).toBeVisible();
+  else await expect(label).toBeHidden();
+  expect(await page.locator('.compare-table').evaluate((table) => table.scrollWidth <= table.clientWidth + 1)).toBe(
+    true,
+  );
+});
+
+test('no page scrolls sideways at 320px', async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 320, height: 720 } });
+  const page = await context.newPage();
+  for (const route of ROUTES) {
+    await page.goto(route.path);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, route.path).toBeLessThanOrEqual(0);
+  }
+  await context.close();
+});
+
 test('Markdown copies and crawler files are served with the right types', async ({ request }) => {
   const checks: [string, RegExp][] = [
     ['/index.md', /^text\/markdown/],

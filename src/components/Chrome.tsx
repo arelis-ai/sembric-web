@@ -1,4 +1,4 @@
-import { Menu, Moon, Sun } from 'lucide-react';
+import { ArrowUp, Menu, Moon, Sun } from 'lucide-react';
 import { INTEGRATIONS } from '../content/integrations';
 import { SITE, markdownPath, pilotMailto } from '../site';
 
@@ -54,22 +54,26 @@ export function SiteHeader({ path }: { path: string }) {
         </nav>
         <div className="header-actions">
           <ThemeToggle />
-          <a className="button button-primary header-cta" href="/contact">
+          <a
+            className="button button-primary header-cta"
+            href="/contact"
+            aria-current={path === '/contact' ? 'page' : undefined}
+          >
             Request a pilot
           </a>
-          <details className="mobile-nav">
+          <details className="mobile-nav" data-mobile-nav>
             <summary aria-label="Menu">
               <Menu aria-hidden="true" size={18} />
             </summary>
             <nav aria-label="Mobile">
-              <ul>
-                {links}
-                <li>
-                  <a href="/contact" aria-current={path === '/contact' ? 'page' : undefined}>
-                    Request a pilot
-                  </a>
-                </li>
-              </ul>
+              <ul>{links}</ul>
+              <a
+                className="button button-primary mobile-nav-cta"
+                href="/contact"
+                aria-current={path === '/contact' ? 'page' : undefined}
+              >
+                Request a pilot
+              </a>
             </nav>
           </details>
         </div>
@@ -81,7 +85,7 @@ export function SiteHeader({ path }: { path: string }) {
 export function Breadcrumbs({ trail }: { trail: { href: string; label: string }[] }) {
   if (trail.length < 2) return null;
   return (
-    <nav className="breadcrumbs container" aria-label="Breadcrumb">
+    <nav className="breadcrumbs" aria-label="Breadcrumb">
       <ol>
         {trail.map((crumb, index) => (
           <li key={crumb.href}>
@@ -177,9 +181,14 @@ export function SiteFooter({ path }: { path: string }) {
       </div>
       <div className="container footer-base">
         <p>
-          © 2026 <a href={SITE.publisher.url}>{SITE.publisher.name}</a>. Sembric is built by {SITE.publisher.name}.
+          © 2026 <a href={SITE.publisher.url}>{SITE.publisher.name}</a>
         </p>
         <p>No cookies. No trackers.</p>
+        <p>
+          <a className="back-to-top" href="#main">
+            Back to top <ArrowUp aria-hidden="true" size={14} />
+          </a>
+        </p>
       </div>
     </footer>
   );

@@ -123,7 +123,11 @@ const ANSWERED = `→ tools/call  sembric_query_product
 {
   "productId": "net-revenue-by-region",
   "dimensions": ["region", "ordered_at:quarter"],
-  "filters": { "ordered_at": { "gte": "2026-01-01", "lt": "2026-07-01" } },
+  "filters": {
+    "ordered_at": {
+      "gte": "2026-01-01", "lt": "2026-07-01"
+    }
+  },
   "limit": 20
 }
 
@@ -147,13 +151,16 @@ const REFUSED = `→ tools/call  sembric_query_product
   customer_email is not a declared dimension
   of this product.
 
-audit  refused · undeclared field · caller mcp · key 3f9c…a1`;
+audit  refused · undeclared field
+       caller mcp · key 3f9c…a1`;
 
 const WITHDRAWN = `steward  customers.segment marked sensitive
          → classification changed
 
-sembric  certificate withdrawn · product returned to draft
-         → agent visibility removed in the same transaction
+sembric  certificate withdrawn
+         → product returned to draft
+         → agent visibility removed in the
+           same transaction
 
 → tools/call  sembric_list_products
 ← net-revenue-by-segment is no longer listed
@@ -191,7 +198,7 @@ export function AgentConsole() {
 
 function ConsolePane({ code, tone, label }: { code: string; tone: 'ok' | 'refused' | 'warn'; label: string }) {
   return (
-    <pre className={`console-pane console-${tone}`} tabIndex={0} aria-label={label}>
+    <pre className={`console-pane console-${tone} scroll-x`} tabIndex={0} aria-label={label}>
       <code>{code}</code>
     </pre>
   );

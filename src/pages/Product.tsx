@@ -1,5 +1,5 @@
 import { CertificationPanel } from '../components/visuals';
-import { CheckList, CtaBand, FaqList, PageHero, Section } from '../components/ui';
+import { ButtonLink, CheckList, CtaBand, FaqList, PageHero, PageNav, Section } from '../components/ui';
 import { PRODUCT_FAQ } from '../content/faqs';
 
 const ROLES = [
@@ -44,10 +44,33 @@ export function Product() {
         eyebrow="Product"
         title="How Sembric turns warehouse tables into answers agents can trust"
         lede="Sembric runs one governed workflow: discover what you already have, classify it, certify exactly what agents may use, then enforce that on every call. Here is each step and the rules it enforces."
+        actions={
+          <>
+            <ButtonLink href="/contact" arrow>
+              Request a pilot
+            </ButtonLink>
+            <ButtonLink href="/security" variant="secondary">
+              Read the security model
+            </ButtonLink>
+          </>
+        }
+      />
+      <PageNav
+        items={[
+          { id: 'discover', label: 'Discover' },
+          { id: 'classify', label: 'Classify' },
+          { id: 'surfaces', label: 'Define' },
+          { id: 'certification', label: 'Certify' },
+          { id: 'serve', label: 'Serve' },
+          { id: 'ontology', label: 'Ontology' },
+          { id: 'team', label: 'Workspace' },
+          { id: 'faq', label: 'FAQ' },
+        ]}
       />
 
       <Section
         id="discover"
+        layout="aside"
         eyebrow="1 · Discover"
         title="Read the catalog, never the whole warehouse"
         intro="An owner connects a BigQuery dataset, Snowflake schema, Trino catalog and schema, Databricks catalog and schema, PostgreSQL schema or MySQL database, and tests the customer identity each Sembric role uses before saving."
@@ -65,6 +88,7 @@ export function Product() {
       <Section
         id="classify"
         tone="sunken"
+        layout="aside"
         eyebrow="2 · Classify and steward"
         title="Every asset has one accountable steward"
         intro="Columns with common personal-data names start sensitive. That heuristic is a starting point, so review by the asset’s assigned data steward is mandatory before anything built on it can be certified."
@@ -141,7 +165,7 @@ export function Product() {
       <Section
         id="serve"
         eyebrow="5 · Serve"
-        title="Bounded, typed queries — and nothing else"
+        title="Bounded, typed queries — and nothing else"
         intro="Agents and applications query certified surfaces through MCP or the REST API. Sembric builds the source query; callers supply only these inputs."
       >
         <div className="table-wrap reveal">
@@ -172,6 +196,7 @@ export function Product() {
       <Section
         id="ontology"
         tone="sunken"
+        layout="aside"
         eyebrow="Context for agents"
         title="Ontology and lineage"
         intro="Concepts declared on certified surfaces form a shared ontology. Owners and engineers connect them with typed relationships, and certification refuses a conflicting definition for an existing concept."

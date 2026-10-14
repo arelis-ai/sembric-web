@@ -12,7 +12,24 @@ export const SITE = {
   updated: '2026-10-14',
 } as const;
 
-export const pilotMailto = `mailto:${SITE.contactEmail}?subject=${encodeURIComponent('Sembric pilot request')}`;
+/** Prompts pre-filled into pilot emails; the contact page lists the same questions. */
+export const PILOT_PROMPTS = [
+  'Which warehouse or engine holds the data: BigQuery, Snowflake, Trino, Databricks, PostgreSQL or MySQL',
+  'The first questions your agents should answer, and who owns that data today',
+  'Which agents or clients you use, such as Claude Code or your own MCP client',
+  'Any security or compliance review the pilot needs to pass',
+];
+
+const PILOT_BODY = [
+  'Hello Sembric team,',
+  '',
+  'We would like to discuss a pilot.',
+  '',
+  ...PILOT_PROMPTS.flatMap((prompt) => [`- ${prompt}:`, '']),
+  '(Please do not include credentials or customer data.)',
+].join('\r\n');
+
+export const pilotMailto = `mailto:${SITE.contactEmail}?subject=${encodeURIComponent('Sembric pilot request')}&body=${encodeURIComponent(PILOT_BODY)}`;
 
 export const absoluteUrl = (path: string) => (path === '/' ? `${SITE.origin}/` : `${SITE.origin}${path}`);
 
